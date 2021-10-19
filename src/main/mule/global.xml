@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="5911b01c-66f4-48fe-a56a-4d92ebaee782" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<sftp:config name="SFTP_Config" doc:name="SFTP Config" doc:id="ca643823-41da-4ad8-aa0e-8ac9b7cbb1c4" >
+		<sftp:connection host="192.168.43.181" username="sftp-user" password="mulesoft1234567890" port="30">
+			<reconnection >
+			</reconnection>
+		</sftp:connection>
+	</sftp:config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="b58063f6-e150-4527-a9a5-b55f0b1ffe2d" >
+		<salesforce:basic-connection username="ketan.bhagat@apisero.com" password="mulesoft1234567890" securityToken="Jkz8DJbYwbLgAawX1T1Yo2Qy"/>
+	</salesforce:sfdc-config>
+	<file:config name="File_Config" doc:name="File Config" doc:id="bf1a52c4-15a0-4fe0-97b0-6e664f92200a" >
+		<file:connection workingDir="D:\Training\Doctus\RebexTinySftpServer-Binaries-Latest\data" />
+	</file:config>
+	<configuration doc:name="Configuration" doc:id="53952fd9-ea5c-4006-9ff1-343b9cb0a1ec" defaultErrorHandler-ref="globalErrorHandler" />
+	<error-handler name="globalErrorHandler">
+            <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="754438bd-7567-43bd-9189-926489c241fc" type="ANY">
+			<ee:transform doc:name="Transform Message" doc:id="2f4ccda0-c0ee-423f-a51c-b10d2a81af14" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+"Error":
+	{
+		"Timestamp" : now(),
+		"Correlation Id" : correlationId,
+		"Error Description" : error.detailedDescription,
+		"Error Status" : error.errorMessage.attributes.statusCode
+	}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="httpStatus"><![CDATA[500]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="dc5ab3f2-6433-4c1d-b8a8-61fe4b7c4501" message="#[payload]" />
+		
+</on-error-propagate>
+        </error-handler>
+</mule>
