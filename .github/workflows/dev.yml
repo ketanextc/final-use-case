@@ -2,9 +2,9 @@
 name: dev pipeline
 on:
   push:
-    branches: [develop]
+    branches: [dev]
   pull_request:
-    branches: [develop]
+    branches: [dev]
 jobs:
   build:
     runs-on: ubuntu-latest
