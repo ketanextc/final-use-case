@@ -52,4 +52,4 @@ jobs:
         PASSWORD: ${{ secrets.ANYPOINT_PASSWORD }}
       run: |
         artifactName=$(ls *.jar | head -1)
-        mvn mule:deploy -Dmule.artifact=$artifactName -Danypoint.userName=${{secrets.USERNAME}}" -Danypoint.password="${{secrets.PASSWORD}}" -Dap.client_id=${{ secrets.client_id }} -Dap.client_secret=${{ secrets.client_secret }}
+        mvn mule:deploy -Dmule.artifact=$artifactName -Danypoint.userName=${{secrets.USERNAME}} -Danypoint.password=${{secrets.PASSWORD}} -Dap.client_id=${{ secrets.client_id }} -Dap.client_secret=${{ secrets.client_secret }}
